@@ -4,194 +4,125 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROAR NAILS - Gestor de Citas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
-
-        header {
-            background: #c2185b;
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-        }
-
-        header h1 { font-size: 1.8rem; }
-        header p { font-size: 0.9rem; opacity: 0.85; }
-
-        main {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        section {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-        }
-
-        section h2 {
-            font-size: 1rem;
-            color: #c2185b;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 0.5rem;
-        }
-
-        .full-width { grid-column: 1 / -1; }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.25rem;
-            margin-top: 0.75rem;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        button {
-            margin-top: 1rem;
-            width: 100%;
-            padding: 0.6rem;
-            background: #c2185b;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        button:hover { background: #ad1457; }
-
-        .mensaje {
-            margin-top: 0.75rem;
-            font-size: 0.85rem;
-            color: #2e7d32;
-            min-height: 1.2rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        th {
-            text-align: left;
-            padding: 0.5rem;
-            border-bottom: 2px solid #f0f0f0;
-            color: #999;
-            font-weight: 500;
-        }
-
-        td {
-            padding: 0.5rem;
-            border-bottom: 1px solid #f9f9f9;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 99px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .PENDIENTE  { background: #fff8e1; color: #f57f17; }
-        .CONFIRMADA { background: #e8f5e9; color: #2e7d32; }
-        .CANCELADA  { background: #ffebee; color: #c62828; }
-        .COMPLETADA { background: #e3f2fd; color: #1565c0; }
+        header { background: #c2185b; }
+        .badge-PENDIENTE  { background: #fff8e1; color: #f57f17; }
+        .badge-CONFIRMADA { background: #e8f5e9; color: #2e7d32; }
+        .badge-CANCELADA  { background: #ffebee; color: #c62828; }
+        .badge-COMPLETADA { background: #e3f2fd; color: #1565c0; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>ROAR NAILS</h1>
-    <p>Gestor de citas</p>
+<header class="text-white py-3 mb-4">
+    <div class="container text-center">
+        <h1 class="fw-bold mb-0">ROAR NAILS</h1>
+        <p class="mb-0 opacity-75">Gestor de citas</p>
+    </div>
 </header>
 
-<main>
+<main class="container">
+    <div class="row g-4">
 
-    <!-- Agendar cita -->
-    <section>
-        <h2>Agendar cita</h2>
+        <!-- Agendar cita -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-danger mb-3">Agendar cita</h5>
 
-        <label>Cliente</label>
-        <select id="select-cliente">
-            <option value="">Selecciona un cliente...</option>
-        </select>
+                    <label class="form-label">Cliente</label>
+                    <select id="select-cliente" class="form-select mb-2">
+                        <option value="">Selecciona un cliente...</option>
+                    </select>
 
-        <label>Servicio</label>
-        <select id="select-servicio">
-            <option value="">Selecciona un servicio...</option>
-        </select>
+                    <label class="form-label">Servicio</label>
+                    <select id="select-servicio" class="form-select mb-2">
+                        <option value="">Selecciona un servicio...</option>
+                    </select>
 
-        <label>Fecha</label>
-        <input type="date" id="input-fecha">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" id="input-fecha" class="form-control mb-2">
 
-        <label>Hora</label>
-        <input type="time" id="input-hora">
+                    <label class="form-label">Hora</label>
+                    <input type="time" id="input-hora" class="form-control mb-3">
 
-        <button onclick="agendarCita()">Agendar cita</button>
-        <div class="mensaje" id="msg-cita"></div>
-    </section>
+                    <button onclick="agendarCita()" class="btn btn-danger w-100">Agendar cita</button>
+                    <div class="mt-2 small" id="msg-cita"></div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Nuevo cliente -->
-    <section>
-        <h2>Nuevo cliente</h2>
+        <!-- Nuevo cliente -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-danger mb-3">Nuevo cliente</h5>
 
-        <label>Nombre</label>
-        <input type="text" id="input-nombre" placeholder="Nombre completo">
+                    <label class="form-label">Nombre</label>
+                    <input type="text" id="input-nombre" class="form-control mb-2" placeholder="Nombre completo">
 
-        <label>Teléfono</label>
-        <input type="text" id="input-telefono" placeholder="8112345678">
+                    <label class="form-label">Teléfono</label>
+                    <input type="text" id="input-telefono" class="form-control mb-2" placeholder="8112345678">
 
-        <label>Email</label>
-        <input type="email" id="input-email" placeholder="correo@email.com">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="input-email" class="form-control mb-3" placeholder="correo@email.com">
 
-        <button onclick="crearCliente()">Registrar cliente</button>
-        <div class="mensaje" id="msg-cliente"></div>
-    </section>
+                    <button onclick="crearCliente()" class="btn btn-danger w-100">Registrar cliente</button>
+                    <div class="mt-2 small" id="msg-cliente"></div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Citas del día -->
-    <section class="full-width">
-        <h2>Citas del día</h2>
-        <label>Fecha</label>
-        <input type="date" id="input-fecha-busqueda" style="margin-bottom:1rem">
-        <button onclick="buscarCitas()" style="width:auto;padding:0.5rem 1.5rem">Buscar</button>
-        <br><br>
-        <table>
-            <thead>
-            <tr>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Precio</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody id="tabla-citas">
-            <tr><td colspan="6" style="color:#aaa;text-align:center">Selecciona una fecha</td></tr>
-            </tbody>
-        </table>
-    </section>
+        <!-- Citas del día -->
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-danger mb-3">Citas del día</h5>
+                    <div class="d-flex gap-2 align-items-end mb-3">
+                        <div class="flex-grow-1">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" id="input-fecha-busqueda" class="form-control">
+                        </div>
+                        <button onclick="buscarCitas()" class="btn btn-outline-danger">Buscar</button>
+                    </div>
 
+                    <table class="table table-hover table-sm">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Hora</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Precio</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabla-citas">
+                        <tr><td colspan="6" class="text-center text-muted">Selecciona una fecha</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     const API = 'http://localhost:8080/api';
+
+    function badgeColor(estado) {
+        const map = {
+            PENDIENTE:  { bg: '#fff8e1', text: '#f57f17' },
+            CONFIRMADA: { bg: '#e8f5e9', text: '#2e7d32' },
+            CANCELADA:  { bg: '#ffebee', text: '#c62828' },
+            COMPLETADA: { bg: '#e3f2fd', text: '#1565c0' }
+        };
+        return map[estado] || { bg: '#eee', text: '#333' };
+    }
 
     async function cargarSelects() {
         const [clientes, servicios] = await Promise.all([
@@ -282,7 +213,7 @@
         const tbody = document.getElementById('tabla-citas');
 
         if (citas.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="color:#aaa;text-align:center">No hay citas para esta fecha</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No hay citas para esta fecha</td></tr>`;
             return;
         }
 
@@ -292,16 +223,10 @@
             <td>${c.cliente.nombre}</td>
             <td>${c.servicio.nombre}</td>
             <td>$${c.servicio.precio}</td>
-            <td><span class="badge ${c.estado}">${c.estado}</span></td>
+            <td><span class="badge" style="background:${badgeColor(c.estado).bg};color:${badgeColor(c.estado).text}">${c.estado}</span></td>
             <td>
-                <button onclick="cambiarEstado(${c.id}, 'confirmar')"
-                    style="width:auto;padding:2px 8px;font-size:0.75rem;margin:0 2px">
-                    Confirmar
-                </button>
-                <button onclick="cambiarEstado(${c.id}, 'cancelar')"
-                    style="width:auto;padding:2px 8px;font-size:0.75rem;margin:0 2px;background:#c62828">
-                    Cancelar
-                </button>
+                <button onclick="cambiarEstado(${c.id}, 'confirmar')" class="btn btn-success btn-sm">Confirmar</button>
+                <button onclick="cambiarEstado(${c.id}, 'cancelar')" class="btn btn-danger btn-sm">Cancelar</button>
             </td>
         </tr>
     `).join('');
@@ -316,4 +241,6 @@
 </script>
 
 </body>
+</body>
+
 </html>
