@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROAR NAILS - Gestor de Citas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; color: #333; }
+
+        header {
+            background: #c2185b;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+
+        header h1 { font-size: 1.8rem; }
+        header p { font-size: 0.9rem; opacity: 0.85; }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        section h2 {
+            font-size: 1rem;
+            color: #c2185b;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.25rem;
+            margin-top: 0.75rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        button {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 0.6rem;
+            background: #c2185b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        button:hover { background: #ad1457; }
+
+        .mensaje {
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: #2e7d32;
+            min-height: 1.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            color: #999;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .PENDIENTE  { background: #fff8e1; color: #f57f17; }
+        .CONFIRMADA { background: #e8f5e9; color: #2e7d32; }
+        .CANCELADA  { background: #ffebee; color: #c62828; }
+        .COMPLETADA { background: #e3f2fd; color: #1565c0; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ROAR NAILS</h1>
+    <p>Gestor de citas</p>
+</header>
+
+<main>
+
+    <!-- Agendar cita -->
+    <section>
+        <h2>Agendar cita</h2>
+
+        <label>Cliente</label>
+        <select id="select-cliente">
+            <option value="">Selecciona un cliente...</option>
+        </select>
+
+        <label>Servicio</label>
+        <select id="select-servicio">
+            <option value="">Selecciona un servicio...</option>
+        </select>
+
+        <label>Fecha</label>
+        <input type="date" id="input-fecha">
+
+        <label>Hora</label>
+        <input type="time" id="input-hora">
+
+        <button onclick="agendarCita()">Agendar cita</button>
+        <div class="mensaje" id="msg-cita"></div>
+    </section>
+
+    <!-- Nuevo cliente -->
+    <section>
+        <h2>Nuevo cliente</h2>
+
+        <label>Nombre</label>
+        <input type="text" id="input-nombre" placeholder="Nombre completo">
+
+        <label>Teléfono</label>
+        <input type="text" id="input-telefono" placeholder="8112345678">
+
+        <label>Email</label>
+        <input type="email" id="input-email" placeholder="correo@email.com">
+
+        <button onclick="crearCliente()">Registrar cliente</button>
+        <div class="mensaje" id="msg-cliente"></div>
+    </section>
+
+    <!-- Citas del día -->
+    <section class="full-width">
+        <h2>Citas del día</h2>
+        <label>Fecha</label>
+        <input type="date" id="input-fecha-busqueda" style="margin-bottom:1rem">
+        <button onclick="buscarCitas()" style="width:auto;padding:0.5rem 1.5rem">Buscar</button>
+        <br><br>
+        <table>
+            <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody id="tabla-citas">
+            <tr><td colspan="6" style="color:#aaa;text-align:center">Selecciona una fecha</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<script>
+    const API = 'http://localhost:8080/api';
+
+    async function cargarSelects() {
+        const [clientes, servicios] = await Promise.all([
+            fetch(`${API}/clientes`).then(r => r.json()),
+            fetch(`${API}/servicios`).then(r => r.json())
+        ]);
+
+        const sc = document.getElementById('select-cliente');
+        clientes.forEach(c => {
+            sc.innerHTML += `<option value="${c.id}">${c.nombre} — ${c.telefono}</option>`;
+        });
+
+        const ss = document.getElementById('select-servicio');
+        servicios.forEach(s => {
+            ss.innerHTML += `<option value="${s.id}">${s.nombre} — $${s.precio}</option>`;
+        });
+    }
+
+    async function agendarCita() {
+        const clienteId  = document.getElementById('select-cliente').value;
+        const servicioId = document.getElementById('select-servicio').value;
+        const fecha      = document.getElementById('input-fecha').value;
+        const hora       = document.getElementById('input-hora').value;
+        const msg        = document.getElementById('msg-cita');
+
+        if (!clienteId || !servicioId || !fecha || !hora) {
+            msg.style.color = '#c62828';
+            msg.textContent = 'Completa todos los campos.';
+            return;
+        }
+
+        const res = await fetch(`${API}/citas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                cliente:  { id: parseInt(clienteId) },
+                servicio: { id: parseInt(servicioId) },
+                fecha,
+                hora: hora + ':00'
+            })
+        });
+
+        if (res.ok) {
+            msg.style.color = '#2e7d32';
+            msg.textContent = 'Cita agendada correctamente.';
+        } else {
+            msg.style.color = '#c62828';
+            msg.textContent = 'Error al agendar la cita.';
+        }
+    }
+
+    async function crearCliente() {
+        const nombre   = document.getElementById('input-nombre').value;
+        const telefono = document.getElementById('input-telefono').value;
+        const email    = document.getElementById('input-email').value;
+        const msg      = document.getElementById('msg-cliente');
+
+        if (!nombre || !telefono) {
+            msg.style.color = '#c62828';
+            msg.textContent = 'Nombre y teléfono son obligatorios.';
+            return;
+        }
+
+        const res = await fetch(`${API}/clientes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre, telefono, email })
+        });
+
+        if (res.ok) {
+            msg.style.color = '#2e7d32';
+            msg.textContent = 'Cliente registrado correctamente.';
+            document.getElementById('input-nombre').value = '';
+            document.getElementById('input-telefono').value = '';
+            document.getElementById('input-email').value = '';
+            cargarSelects();
+        } else {
+            msg.style.color = '#c62828';
+            msg.textContent = 'Error al registrar el cliente.';
+        }
+    }
+
+    async function buscarCitas() {
+        const fecha = document.getElementById('input-fecha-busqueda').value;
+        if (!fecha) return;
+
+        const citas = await fetch(`${API}/citas/fecha/${fecha}`).then(r => r.json());
+        const tbody = document.getElementById('tabla-citas');
+
+        if (citas.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="color:#aaa;text-align:center">No hay citas para esta fecha</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = citas.map(c => `
+        <tr>
+            <td>${c.hora.substring(0, 5)}</td>
+            <td>${c.cliente.nombre}</td>
+            <td>${c.servicio.nombre}</td>
+            <td>$${c.servicio.precio}</td>
+            <td><span class="badge ${c.estado}">${c.estado}</span></td>
+            <td>
+                <button onclick="cambiarEstado(${c.id}, 'confirmar')"
+                    style="width:auto;padding:2px 8px;font-size:0.75rem;margin:0 2px">
+                    Confirmar
+                </button>
+                <button onclick="cambiarEstado(${c.id}, 'cancelar')"
+                    style="width:auto;padding:2px 8px;font-size:0.75rem;margin:0 2px;background:#c62828">
+                    Cancelar
+                </button>
+            </td>
+        </tr>
+    `).join('');
+    }
+
+    async function cambiarEstado(id, accion) {
+        await fetch(`${API}/citas/${id}/${accion}`, { method: 'PUT' });
+        buscarCitas();
+    }
+
+    cargarSelects();
+</script>
+
+</body>
+</html>
