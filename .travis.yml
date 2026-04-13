@@ -1,0 +1,19 @@
+language: java
+
+jdk:
+  - openjdk21
+
+cache:
+  directories:
+    - ~/.m2
+
+before_install:
+  - chmod +x mvnw
+
+script:
+  - ./mvnw test
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
